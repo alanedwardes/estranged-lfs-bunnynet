@@ -2,7 +2,7 @@
 
 Git LFS batch API server running as a [bunny.net Edge Script](https://docs.bunny.net/scripting). Ported from [Estranged.Lfs](https://github.com/EstrangedGame/Estranged.Lfs).
 
-S3 presigned URLs via AWS SigV4 (no SDK), dictionary and GitHub auth, CloudFront host swap. ~$0.22/month compute at indie game traffic levels.
+S3 presigned URLs via [aws4fetch](https://github.com/mhart/aws4fetch) (no AWS SDK), dictionary and GitHub auth, CloudFront host swap. ~$0.22/month compute at indie game traffic levels.
 
 ## Deploy
 
