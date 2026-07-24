@@ -11,7 +11,7 @@ npm install && npm run build
 bunny scripts deploy dist/index.js
 ```
 
-Set environment variables via the dashboard or CLI. Required: `LFS_S3_BUCKET`, `LFS_S3_ACCESS_KEY_ID`, `LFS_S3_SECRET_ACCESS_KEY`, `LFS_AUTH_MODE`. See below for the full list.
+Set environment variables via the dashboard or CLI. Required: `LFS_S3_BUCKET`, `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `LFS_AUTH_MODE`. See below for the full list.
 
 Configure your Git repo to point at the edge script:
 
@@ -26,8 +26,8 @@ Configure your Git repo to point at the edge script:
 | Variable | Required | Default | Description |
 |----------|----------|---------|-------------|
 | `LFS_S3_BUCKET` | Yes | — | S3 bucket name |
-| `LFS_S3_ACCESS_KEY_ID` | Yes | — | AWS access key ID |
-| `LFS_S3_SECRET_ACCESS_KEY` | Yes | — | AWS secret access key |
+| `AWS_ACCESS_KEY_ID` | Yes | — | AWS access key ID |
+| `AWS_SECRET_ACCESS_KEY` | Yes | — | AWS secret access key |
 | `LFS_AUTH_MODE` | Yes | — | `dictionary` or `github` |
 | `LFS_S3_REGION` | No | `us-east-1` | AWS region |
 | `LFS_S3_KEY_PREFIX` | No | `""` | Prefix prepended to S3 object keys |

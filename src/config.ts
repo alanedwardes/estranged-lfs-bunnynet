@@ -59,8 +59,8 @@ export function loadConfig(): LfsConfig {
     keyPrefix: getEnv("LFS_S3_KEY_PREFIX") ?? "",
     region: getEnv("LFS_S3_REGION") ?? "us-east-1",
     endpoint: getEnv("LFS_S3_ENDPOINT"),
-    accessKeyId: requireEnv("LFS_S3_ACCESS_KEY_ID"),
-    secretAccessKey: requireEnv("LFS_S3_SECRET_ACCESS_KEY"),
+    accessKeyId: requireEnv("AWS_ACCESS_KEY_ID"),
+    secretAccessKey: requireEnv("AWS_SECRET_ACCESS_KEY"),
     expirySeconds: getEnvInt("LFS_S3_EXPIRY_SECONDS", 3600),
     cloudFrontDomain: getEnv("LFS_CLOUDFRONT_DOMAIN") || undefined,
   };
