@@ -12,9 +12,6 @@ const buildOptions = {
   define: { "process.env.NODE_ENV": '"production"' },
   minify: !isWatch,
   outfile: "dist/index.js",
-  banner: {
-    js: 'import * as process from "node:process";import { Buffer } from "node:buffer";globalThis.process ??= process;globalThis.Buffer ??= Buffer;globalThis.global ??= globalThis;',
-  },
 };
 
 if (isWatch) {

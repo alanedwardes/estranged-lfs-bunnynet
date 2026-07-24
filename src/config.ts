@@ -55,7 +55,7 @@ function getEnvInt(key: string, defaultValue: number): number {
 
 export function loadConfig(): LfsConfig {
   const s3: S3Config = {
-    bucket: requireEnv("LFS_S3_BUCKET"),
+    bucket: requireEnv("LFS_BUCKET"),
     keyPrefix: getEnv("LFS_S3_KEY_PREFIX") ?? "",
     region: getEnv("LFS_S3_REGION") ?? "us-east-1",
     endpoint: getEnv("LFS_S3_ENDPOINT"),
@@ -65,49 +65,48 @@ export function loadConfig(): LfsConfig {
     cloudFrontDomain: getEnv("LFS_CLOUDFRONT_DOMAIN") || undefined,
   };
 
-  const authMode = requireEnv("LFS_AUTH_MODE");
-  let auth: AuthConfig;
+  const credentials = new Map<string, string>();
 
-  if (authMode === "dictionary") {
-    const credentials = new Map<string, string>();
+  const username = getEnv("LFS_USERNAME");
+  const password = getEnv("LFS_PASSWORD");
+  if (username && password) {
+    credentials.set(username, password);
+  }
 
-    const username = getEnv("LFS_USERNAME");
-    const password = getEnv("LFS_PASSWORD");
-    if (username && password) {
-      credentials.set(username, password);
-    }
-
-    const credentialsJson = getEnv("LFS_CREDENTIALS");
-    if (credentialsJson) {
-      try {
-        const parsed = JSON.parse(credentialsJson) as Record<string, string>;
-        for (const [user, pass] of Object.entries(parsed)) {
-          credentials.set(user, pass);
-        }
-      } catch {
-        throw new Error("Invalid JSON in LFS_CREDENTIALS environment variable");
+  const credentialsJson = getEnv("LFS_CREDENTIALS");
+  if (credentialsJson) {
+    try {
+      const parsed = JSON.parse(credentialsJson) as Record<string, string>;
+      for (const [user, pass] of Object.entries(parsed)) {
+        credentials.set(user, pass);
       }
+    } catch {
+      throw new Error("Invalid JSON in LFS_CREDENTIALS environment variable");
     }
+  }
 
-    if (credentials.size === 0) {
-      throw new Error(
-        "Dictionary auth requires LFS_USERNAME/LFS_PASSWORD or LFS_CREDENTIALS"
-      );
-    }
+  const isDictionaryAuth = credentials.size > 0;
 
-    auth = { mode: "dictionary", credentials };
-  } else if (authMode === "github") {
-    auth = {
-      mode: "github",
-      organisation: requireEnv("GITHUB_ORGANISATION"),
-      repository: requireEnv("GITHUB_REPOSITORY"),
-      apiBase: getEnv("GITHUB_API_BASE") ?? "https://api.github.com/",
-    };
-  } else {
+  const gitHubOrganisation = getEnv("GITHUB_ORGANISATION");
+  const gitHubRepository = getEnv("GITHUB_REPOSITORY");
+  const isGitHubAuth = !!gitHubOrganisation && !!gitHubRepository;
+
+  if ([isDictionaryAuth, isGitHubAuth].filter(Boolean).length !== 1) {
     throw new Error(
-      `Unsupported LFS_AUTH_MODE: ${authMode}. Must be "dictionary" or "github"`
+      "Unable to detect authentication mechanism. Please set LFS_USERNAME and LFS_PASSWORD " +
+        "(or LFS_CREDENTIALS) for simple user/password auth, or GITHUB_ORGANISATION and " +
+        "GITHUB_REPOSITORY for authentication against that repository on GitHub"
     );
   }
+
+  const auth: AuthConfig = isDictionaryAuth
+    ? { mode: "dictionary", credentials }
+    : {
+        mode: "github",
+        organisation: gitHubOrganisation!,
+        repository: gitHubRepository!,
+        apiBase: getEnv("GITHUB_API_BASE") ?? "https://api.github.com/",
+      };
 
   return { s3, auth };
 }
