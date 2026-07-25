@@ -88,7 +88,7 @@ export async function handleBatchRequest(
   }
 
   return jsonResponse(200, {
-    transfer: body.transfers?.[0] || "basic",
+    transfer: "basic",
     objects: responseObjects,
   });
 }
